@@ -4,6 +4,8 @@ import { User } from '../user/user.model';
 import { Thread } from '../thread/thread.model';
 import { Message } from '../message/message.model';
 
+import * as _ from 'lodash';
+
 const initialMessages: Message[] = [];
 
 interface IMessagesOperation extends Function {
@@ -26,6 +28,8 @@ export class MessagesService {
   // action streams
   create: Subject<Message> = new Subject<Message>();
   markThreadAsRead: Subject<any> = new Subject<any>();
+  remove: Subject<Message> = new Subject<Message>();
+  removeThreadMessages: Subject<any> = new Subject<any>();
 
   constructor() {
     this.messages = this.updates
@@ -84,11 +88,39 @@ export class MessagesService {
       })
       .subscribe(this.updates);
 
+    // Remove all messages from particular thread
+    this.removeThreadMessages
+      .map( (thread: Thread) => {
+        return (messages: any) => {
+          _.remove(messages, (el: any) => {
+            return el.id === thread.id
+          });
+          return messages;
+        };
+      })
+      .subscribe(this.updates);
+
+    // Remove all messages from message stream
+    this.remove
+      .map( function(): IMessagesOperation {
+        return (messages: Message[]) => {
+          return messages = [];
+        };
+      })
+      .subscribe(this.updates);
   }
 
   // an imperative function call to this action stream
   addMessage(message: Message): void {
     this.newMessages.next(message);
+  }
+
+  removeAllMessages() {
+    this.remove.next();
+  }
+
+  removeAllThreadMessages(thread: Thread) {
+    this.removeThreadMessages.next(thread);
   }
 
   messagesForThreadUser(thread: Thread, user: User): Observable<Message> {
