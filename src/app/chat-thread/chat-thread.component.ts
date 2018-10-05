@@ -16,6 +16,7 @@ import { Thread } from '../thread/thread.model';
 })
 export class ChatThreadComponent implements OnInit {
   @Input() thread: Thread;
+  @Input() unread: any;
   selected = false;
 
   constructor(public threadsService: ThreadsService) {

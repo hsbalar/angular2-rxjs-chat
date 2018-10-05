@@ -6,6 +6,7 @@
   <div class="media-body">
     <h5 class="media-heading contact-name">{{thread.name}}
       <span *ngIf="selected">&bull;</span>
+      <span class="badge">{{ unread?.sum }}</span>
     </h5>
     <small class="message-preview">{{thread.lastMessage.text}}</small>
   </div>

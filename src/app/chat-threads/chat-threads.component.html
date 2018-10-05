@@ -4,7 +4,7 @@
 
     <chat-thread
          *ngFor="let thread of threads | async"
-         [thread]="thread">
+         [thread]="thread" [unread]="unreadThread[thread.id]">
     </chat-thread>
 
   </div>
